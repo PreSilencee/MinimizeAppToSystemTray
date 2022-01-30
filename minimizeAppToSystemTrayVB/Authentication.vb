@@ -17,7 +17,7 @@ Public Class Authentication
             RestoreMenu.Enabled = False
             HideMenu.Enabled = True
             Close()
-            SetParent(processHandle, WinDesktop)
+            ShowWindow(WinDesktop, SW_SHOW)
         Else
             MessageBox.Show("Invalid authentication")
         End If

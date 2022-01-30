@@ -13,19 +13,21 @@ namespace minimizeAppToSystemTrayCSharp
     class Program
     {
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+        
+        [DllImport("Kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+
         [DllImport("user32.dll")]
-        private static extern IntPtr GetShellWindow();
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetDesktopWindow();
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+       
 
         private static NotifyIcon notifyIcon;
         public static IntPtr processHandle;
-        public static IntPtr WinShell;
-        public static IntPtr WinDesktop;
+        public static IntPtr WinConsole;
         public static MenuItem HideMenu;
         public static MenuItem RestoreMenu;
+        public static int SW_HIDE = 0;
+        public static int SW_SHOW = 5;
 
         static void Main(string[] args)
         {
@@ -45,11 +47,8 @@ namespace minimizeAppToSystemTrayCSharp
             // You need to spin off your actual work in a different thread so that the Notify Icon works correctly
             Task.Factory.StartNew(new Action(Run));
             processHandle = Process.GetCurrentProcess().MainWindowHandle;
-            WinShell = GetShellWindow();
-            WinDesktop = GetDesktopWindow();
+            WinConsole = GetConsoleWindow();
 
-            // Hide the Window
-            // ResizeWindow(false);
             RestoreMenu.Enabled = false;
             /// This is required for triggering WinForms activity in Console app
             Application.Run();
@@ -94,7 +93,7 @@ namespace minimizeAppToSystemTrayCSharp
             {
                 RestoreMenu.Enabled = true;
                 HideMenu.Enabled = false;
-                SetParent(processHandle, WinShell);
+                ShowWindow(WinConsole, SW_HIDE);
             }
         }
     }

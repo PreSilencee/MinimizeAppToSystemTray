@@ -25,7 +25,7 @@ namespace minimizeAppToSystemTrayCSharp
                 Program.RestoreMenu.Enabled = false;
                 Program.HideMenu.Enabled = true;
                 Close();
-                Program.SetParent(Program.processHandle, Program.WinDesktop);
+                Program.ShowWindow(Program.WinConsole, Program.SW_SHOW);
             }
             else
             {

@@ -4,16 +4,12 @@ Imports System.Windows.Forms
 
 Module Module1
 
-    <DllImport("user32.dll", SetLastError:=True)>
-    Public Function SetParent(ByVal hWndChild As IntPtr, ByVal hWndNewParent As IntPtr) As IntPtr
+    <DllImport("user32.dll")>
+    Public Function ShowWindow(ByVal hWnd As IntPtr, nCmdShow As Integer) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Function GetShellWindow() As IntPtr
-    End Function
-
-    <DllImport("user32.dll")>
-    Private Function GetDesktopWindow() As IntPtr
+    <DllImport("Kernel32.dll")>
+    Public Function GetConsoleWindow() As IntPtr
     End Function
 
     Private notifyIcon As NotifyIcon
@@ -22,6 +18,8 @@ Module Module1
     Public WinDesktop As IntPtr
     Public HideMenu As MenuItem
     Public RestoreMenu As MenuItem
+    Public SW_HIDE As Integer = 0
+    Public SW_SHOW As Integer = 5
 
     Sub Main()
         notifyIcon = New NotifyIcon()
@@ -39,8 +37,8 @@ Module Module1
         ' You need to spin off your actual work in a different thread so that the Notify Icon works correctly
         Call Task.Factory.StartNew(New Action(AddressOf Run))
         processHandle = Process.GetCurrentProcess().MainWindowHandle
-        WinShell = GetShellWindow()
-        WinDesktop = GetDesktopWindow()
+
+        WinDesktop = GetConsoleWindow()
 
         ' Hide the Window
         ' ResizeWindow(false);
@@ -82,7 +80,7 @@ Module Module1
         Else
             RestoreMenu.Enabled = True
             HideMenu.Enabled = False
-            SetParent(processHandle, WinShell)
+            ShowWindow(WinDesktop, SW_HIDE)
         End If
     End Sub
 
